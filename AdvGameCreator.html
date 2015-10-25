@@ -1,0 +1,94 @@
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>Adventure Game Locations Editor</title>
+
+		<script type="text/javascript">
+		var selDiv = "";
+		var newLeft = 200;
+		var newTop = 50;
+		var nextDivID = 1;
+		var currTA = 1;
+		function oc(i){
+			selDiv = i;
+			BlueBords();
+			document.getElementById(i).style.border = "1px solid green";
+			document.getElementById("b1").style.visibility = "visible";
+			document.getElementById("b2").style.visibility = "visible";
+			document.getElementById("b3").style.visibility = "visible";
+			document.getElementById("b4").style.visibility = "visible";
+			document.getElementById("b5").style.visibility = "visible";
+		}
+		function dlboc(){
+			document.getElementById(selDiv).style.height = (parseInt(document.getElementById(selDiv).style.height)-10)+"px";
+			document.getElementById(selDiv).style.width = (parseInt(document.getElementById(selDiv).style.width)-10)+"px";
+		}
+		function lboc(){
+			document.getElementById(selDiv).style.height = (parseInt(document.getElementById(selDiv).style.height)-1)+"px";
+			document.getElementById(selDiv).style.width = (parseInt(document.getElementById(selDiv).style.width)-1)+"px";
+		}
+		function rboc(){
+			document.getElementById(selDiv).style.height = (parseInt(document.getElementById(selDiv).style.height)+1)+"px";
+			document.getElementById(selDiv).style.width = (parseInt(document.getElementById(selDiv).style.width)+1)+"px";
+		}
+		function drboc(){
+			document.getElementById(selDiv).style.height = (parseInt(document.getElementById(selDiv).style.height)+10)+"px";
+			document.getElementById(selDiv).style.width = (parseInt(document.getElementById(selDiv).style.width)+10)+"px";
+		}
+		function ta(){
+			document.getElementById("ta").style.visibility = "visible";
+			document.getElementById("ta").innerHTML = document.getElementById(selDiv).innerHTML.trim();
+		}
+		function taFinEd(i){
+			document.getElementById(selDiv).innerHTML = document.getElementById("ta").value;
+			document.getElementById(selDiv).style.border = "1px blue solid";
+			document.getElementById("ta").style.visibility = "hidden";
+		}
+		function newLoc(t,l){
+			var d = document.createElement("div");
+			nextDivID++;
+			d.id = "div"+nextDivID;
+			d.style.position = "absolute";
+			d.style.border = "1px solid blue";
+			d.style.width = "100px";
+			d.style.height = "50px";
+			d.style.top = t+"px";
+			d.style.left = l+"px";
+			newLeft += 150;
+			
+			var attr = document.createAttribute("onclick");
+			attr.value = "oc(this.id);";
+			d.setAttributeNode(attr);
+			
+			document.body.appendChild(d);
+			//SelDiv = d.id;
+		}
+		function BlueBords(){
+			var divArr = document.getElementsByTagName("div");
+			//alert(divArr.length);
+			for (index=0;index<divArr.length;index++){
+				document.getElementById("div"+(index+1)).style.border = "1px solid blue";
+			}
+		}
+		</script>
+
+	</head>
+
+  	<body>
+  		<button id="b1" style="visibility:hidden;" onclick="dlboc();"><<</button>
+  		<button id="b2" style="visibility:hidden;" onclick="lboc();">&lt;</button>
+  		<button id="b3" style="visibility:hidden;" onclick="rboc();">></button>
+  		<button id="b4" style="visibility:hidden;" onclick="drboc();">>></button>
+  		<button id="b5" style="visibility:hidden;" onclick="ta();">EDIT</button>
+  		<button id="b6" style="visibility:visible;" onclick="newLoc(newTop,newLeft);">NEW Location</button>
+
+  		<div id="div1" style="position:absolute;border:1px solid blue;width:100px;height:50px;top:50px;left:50px;" onclick="oc(this.id);">
+  		You are in a dimly lit room. You can see a chest here. There is a door to the north. kjdhkjdfgkjdf kgjdf gjkhdf kgj dkfjg kdfjg kdfjg kdfjg 
+  		</div>
+  		
+  		<textarea id="ta" style="position:absolute;border:1px solid blue;width:100px;height:100px;top:40%;left:300px;visibility:hidden;" onchange="taFinEd(this.id);">a textarea</textarea>
+  	</body>
+</html>

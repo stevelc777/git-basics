@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<style>
+	td{
+	font-family:courier;
+	font-size:12px;
+	text-align:center;
+	}
+	.td1{
+	font-family:courier;
+	font-size:45px;
+	text-align:center;
+	}
+	</style>
+	<script type="text/javascript">
+		var arrRow = new Array();
+		var arrCol = new Array();
+		var area;
+		var EditMode = false;
+		var Guessed = new Array();
+			for (x=0;x<82;x++){
+				Guessed[x] = 0;
+			}
+		
+		function clbutt(){
+			document.getElementById("sp3").style.visibility="hidden";
+		}
+		function omoLil(i){
+			document.getElementById("txt6").innerHTML = i;
+		}
+		function omo(i){
+			document.getElementById("txt5").innerHTML = i+"";
+			if (Guessed[i]==0){
+				var row=parseInt((i-1)/9)+1;
+				var col=((i-1)%9)+1;
+
+				for (x=1;x<10;x++){
+					document.getElementById(x+(row-1)*9).style.background="lightgreen";
+					arrRow[x]=document.getElementById(x+(row-1)*9).innerHTML;
+				}
+
+				for (y=1;y<10;y++){
+					document.getElementById(col+(y-1)*9).style.background="lightgreen";
+					arrCol[y]=document.getElementById(col+(y-1)*9).innerHTML;
+				}
+
+				if (col<4){
+					if (row<4){
+						area=1;
+					}else if(row<7){
+						area=28;
+					}else{
+						area=55;
+					}
+				}else if(col<7){
+					if (row<4){
+						area=4;
+					}else if(row<7){
+						area=31;
+					}else{
+						area=58;
+					}
+				}else{
+					if (row<4){
+						area=7;
+					}else if(row<7){
+						area=34;
+					}else{
+						area=61;
+					}
+				}
+				document.getElementById(area).style.background="lightgreen";
+				document.getElementById(area+1).style.background="lightgreen";
+				document.getElementById(area+2).style.background="lightgreen";
+				document.getElementById(area+9).style.background="lightgreen";
+				document.getElementById(area+10).style.background="lightgreen";
+				document.getElementById(area+11).style.background="lightgreen";
+				document.getElementById(area+18).style.background="lightgreen";
+				document.getElementById(area+19).style.background="lightgreen";
+				document.getElementById(area+20).style.background="lightgreen";
+
+			// populate text boxes at bottom
+				var dispRow=arrRow[1]+arrRow[2]+arrRow[3]+arrRow[4]+arrRow[5]+arrRow[6]+arrRow[7]+arrRow[8]+arrRow[9];
+				document.getElementById("txt1").innerHTML=dispRow;
+				var dispCol=arrCol[1]+arrCol[2]+arrCol[3]+arrCol[4]+arrCol[5]+arrCol[6]+arrCol[7]+arrCol[8]+arrCol[9];
+				document.getElementById("txt2").innerHTML=dispCol;
+				var dispArea=document.getElementById(area).innerHTML+document.getElementById(area+1).innerHTML+document.getElementById(area+2).innerHTML+document.getElementById(area+9).innerHTML+document.getElementById(area+10).innerHTML+document.getElementById(area+11).innerHTML+document.getElementById(area+18).innerHTML+document.getElementById(area+19).innerHTML+document.getElementById(area+20).innerHTML;
+				document.getElementById("txt3").innerHTML=dispArea;
+	
+				var gotOkRow = getOk(dispRow);
+				//alert(gotOkRow);
+				document.getElementById("txt1").innerHTML=gotOkRow;
+				var gotOkCol = getOk(dispCol);
+				//alert(gotOkCol);
+				document.getElementById("txt2").innerHTML=gotOkCol;
+				var gotOkArea = getOk(dispArea);
+				//alert(gotOkArea);
+				document.getElementById("txt3").innerHTML=gotOkArea;
+				var lilNums = "";
+				var lilNumCnt = 0;
+				if (dispRow.indexOf("1")==-1&&dispCol.indexOf("1")==-1&&dispArea.indexOf("1")==-1){
+					lilNums = lilNums+"1";
+					lilNumCnt++;
+				}
+				if (dispRow.indexOf("2")==-1&&dispCol.indexOf("2")==-1&&dispArea.indexOf("2")==-1){
+					lilNums = lilNums+"2";
+					lilNumCnt++;
+				}
+				if (dispRow.indexOf("3")==-1&&dispCol.indexOf("3")==-1&&dispArea.indexOf("3")==-1){
+					lilNums = lilNums+"3";
+					lilNumCnt++;
+				}
+				if (dispRow.indexOf("4")==-1&&dispCol.indexOf("4")==-1&&dispArea.indexOf("4")==-1){
+					lilNums = lilNums+"4";
+					lilNumCnt++;
+				}
+				if (dispRow.indexOf("5")==-1&&dispCol.indexOf("5")==-1&&dispArea.indexOf("5")==-1){
+					lilNums = lilNums+"5";
+					lilNumCnt++;
+				}
+				if (dispRow.indexOf("6")==-1&&dispCol.indexOf("6")==-1&&dispArea.indexOf("6")==-1){
+					lilNums = lilNums+"6";
+					lilNumCnt++;
+				}
+				if (dispRow.indexOf("7")==-1&&dispCol.indexOf("7")==-1&&dispArea.indexOf("7")==-1){
+					lilNums = lilNums+"7";
+					lilNumCnt++;
+				}
+				if (dispRow.indexOf("8")==-1&&dispCol.indexOf("8")==-1&&dispArea.indexOf("8")==-1){
+					lilNums = lilNums+"8";
+					lilNumCnt++;
+				}
+				if (dispRow.indexOf("9")==-1&&dispCol.indexOf("9")==-1&&dispArea.indexOf("9")==-1){
+					lilNums = lilNums+"9";
+					lilNumCnt++;
+				}
+				document.getElementById("txt4").innerHTML=lilNums;
+				if (lilNumCnt==1){
+					document.getElementById(i).style.background = "orange";
+				}
+			}
+		}
+
+		function getOk(str){
+			var ok="";
+			if (str.indexOf("1")==-1){
+				ok = ok+"1";
+			}
+			if (str.indexOf("2")==-1){
+				ok = ok+"2";
+			}
+			if (str.indexOf("3")==-1){
+				ok = ok+"3";
+			}
+			if (str.indexOf("4")==-1){
+				ok = ok+"4";
+			}
+			if (str.indexOf("5")==-1){
+				ok = ok+"5";
+			}
+			if (str.indexOf("6")==-1){
+				ok = ok+"6";
+			}
+			if (str.indexOf("7")==-1){
+				ok = ok+"7";
+			}
+			if (str.indexOf("8")==-1){
+				ok = ok+"8";
+			}
+			if (str.indexOf("9")==-1){
+				ok = ok+"9";
+			}
+			return ok;
+		}
+		function omout(i){
+			var row=parseInt((i-1)/9)+1;
+			var col=((i-1)%9)+1;
+			for (x=(row-1)*9+1;x<(row-1)*9+10;x++){
+				document.getElementById(x).style.background="white";
+			}
+			for (y=col;y<=col+72;y=y+9){
+				document.getElementById(y).style.background="white";
+			}
+			document.getElementById(area).style.background="white";
+			document.getElementById(area+1).style.background="white";
+			document.getElementById(area+2).style.background="white";
+			document.getElementById(area+9).style.background="white";
+			document.getElementById(area+10).style.background="white";
+			document.getElementById(area+11).style.background="white";
+			document.getElementById(area+18).style.background="white";
+			document.getElementById(area+19).style.background="white";
+			document.getElementById(area+20).style.background="white";
+
+			document.getElementById("txt1").innerHTML="&nbsp;";
+			document.getElementById("txt2").innerHTML="&nbsp;";
+			document.getElementById("txt3").innerHTML="&nbsp;";
+			document.getElementById("txt4").innerHTML="&nbsp;";
+		}
+		function oc(i){
+			if (document.getElementById("txt4").innerHTML.length==1){
+				document.getElementById(i).innerHTML = document.getElementById("txt4").innerHTML;
+				document.getElementById(i).style.color = "blue";
+			}
+		}
+		function init(){
+			for (t=1;t<4;t++){								// counting horizontal bands
+				var tr1 = document.createElement("tr");
+				for (u=1;u<4;u++){							// for 3 areas in each h.band
+					var td1 = document.createElement("td");
+					var att = document.createAttribute("id");
+					att.value="maintd"+(u+(t-1)*3);					
+					td1.setAttributeNode(att);
+					//td1.innerHTML = att.value;
+
+					var tbl = document.createElement("table"); // in the current area
+					var att = document.createAttribute("border");
+					att.value="5";
+					tbl.setAttributeNode(att);
+					var att = document.createAttribute("cellspacing");
+					att.value="0";
+					tbl.setAttributeNode(att);
+					var att = document.createAttribute("width");
+					att.value="100%";
+					tbl.setAttributeNode(att);
+					for (v=1;v<4;v++){
+						var tr2 = document.createElement("tr"); // 3 top cells in area
+						for (w=1;w<4;w++){ 						// each of these cells
+							var td2 = document.createElement("td");
+							var att = document.createAttribute("id");
+							att.value=((u-1)*3+w+(v-1)*9)+(t-1)*27;
+							td2.setAttributeNode(att);
+							var att = document.createAttribute("onmouseover");
+							att.value="omo(this.id);";
+							td2.setAttributeNode(att);
+							var att = document.createAttribute("onmouseout");
+							att.value="omout(this.id);";
+							td2.setAttributeNode(att);
+							var att = document.createAttribute("onclick");
+							att.value="oc(this.id);";
+							td2.setAttributeNode(att);
+							var att = document.createAttribute("style");
+							att.value="width:100px;height:55px;font-size:48px;";
+							td2.setAttributeNode(att);
+//							td2.innerHTML=td2.id; // shows cell's id as caption
+							
+							var tbl2 = document.createElement("table"); // 9 lil numbers
+							var att = document.createAttribute("border");
+							att.value="0";
+							tbl2.setAttributeNode(att);
+							var att = document.createAttribute("width");
+							att.value="100%";
+							tbl2.setAttributeNode(att);
+							for (x=1;x<4;x++){	
+								var tr3 = document.createElement("tr");
+								for (y=1;y<4;y++){
+									var td3 = document.createElement("td");
+									var att = document.createAttribute("id");
+									att.value="t"+(((td2.id-1)*9)+y+(x-1)*3);
+									td3.setAttributeNode(att);
+									td3.innerHTML=((((td2.id-1)*9)+y+(x-1)*3)-1)%9+1;
+//									td3.innerHTML=(att.value);
+									var att = document.createAttribute("onmouseover");
+									att.value="omoLil(this.id);";
+									td3.setAttributeNode(att);
+									var att = document.createAttribute("style");
+									att.value="font-size:10px;color:black;visibility:visible;";
+									td3.setAttributeNode(att);
+
+									tr3.appendChild(td3);
+								}
+								tbl2.appendChild(tr3);
+								//td2.appendChild(tbl2);
+								//td2.innerHTML="1"; // "&nbsp;"; //td2.id; //
+							}
+							td2.appendChild(tbl2); // copied from 3 lines above, out of the for loop
+
+							tr2.appendChild(td2);
+						}
+						tbl.appendChild(tr2);
+					}
+					td1.appendChild(tbl);
+					tr1.appendChild(td1);
+				}
+				document.getElementById("maintbl").appendChild(tr1);				
+			}
+			
+			setCell(2,7);
+			setCell(3,4);
+			setCell(8,8);
+			setCell(10,8);
+			setCell(14,3);
+			setCell(15,9);
+			setCell(22,5);
+			setCell(25,1);
+			setCell(27,3);
+			setCell(29,5);
+			setCell(32,9);
+			setCell(34,2);
+			setCell(37,1);
+			setCell(38,9);
+			setCell(44,4);
+			setCell(45,6);
+			setCell(48,3);
+			setCell(50,6);
+			setCell(53,1);
+			setCell(55,6);
+			setCell(57,9);
+			setCell(60,7);
+			setCell(67,9);
+			setCell(68,4);
+			setCell(72,1);
+			setCell(74,3);
+			setCell(79,8);
+			setCell(80,9);
+			
+		}
+		function setCell(c,n){
+			var d=document.getElementById(c+"");
+			d.innerHTML=n+"";
+			Guessed[c] = 1;
+		}
+		function ToEditMode(t){
+			document.getElementById("t"+(t*9+6)).style.visibility="hidden";
+			EditMode = true;
+			document.getElementById("editmode").style.visibility="hidden";
+			document.getElementById("exiteditmode").style.visibility="visible";
+		}
+		function ExitEditMode(){
+			EditMode = false;
+			document.getElementById("exiteditmode").style.visibility="hidden";
+			document.getElementById("editmode").style.visibility="visible";
+		}
+		function setLilNumCol(){ // loop thru all tiles being
+			for (col=1;col<=81;col++){
+				if (Guessed[col]==0) {
+					for (x=col%9;x<=72+col%9;x=x+9){ // rest of column
+						if (x==col){ // dont check self for a big number
+							var d = x;
+						}
+						else {
+							if (Guessed[x]==1){ // found a big number
+								var d = parseInt(document.getElementById(x).innerHTML);
+								var e = d+(col-1)*9;
+								//alert("t"+e);
+								document.getElementById("t"+e).style.visibility = "hidden";
+							}
+							else {
+								var d = x;
+							}
+						}
+					}
+				}
+			}
+			for (row=1;row<=81;row++){
+				if (Guessed[row]==0) {
+					for (x=parseInt((row-1)/9)*9+1;x<=(parseInt((row-1)/9)+1)*9;x++){ // rest of row
+						if (x==row){ // dont check self for a big number
+							var d = x;
+						}
+						else {
+							if (Guessed[x]==1){ // found a big number
+								var d = parseInt(document.getElementById(x).innerHTML);
+								var e = d+(row-1)*9;
+								//alert("t"+e);
+								document.getElementById("t"+e).style.visibility = "hidden";
+							}
+							else {
+								var d = x;
+							}
+						}
+					}
+				}
+			}
+		}
+	</script>
+	</head>
+	<body onload="init();">
+		<div id="editmode" style="position:absolute;right:20%;top:10%;visibility:visible;"><button onclick="ToEditMode(40);">Enter Edit Mode</button></div>
+		<div id="exiteditmode" style="position:absolute;right:20%;top:10%;visibility:hidden;"><button onclick="ExitEditMode();">Exit Edit Mode</button></div>
+		<div id="DLN" style="position:absolute;right:20%;top:50%;visibility:visible;"><button onclick="setLilNumCol();">Do LilNums</button></div>
+		<table id="maintbl" border="1" cellspacing="0" cellpadding="0" width="35%">
+		</table>	
+		<div id="txt1" style="position:absolute;bottom:17%;border:1px solid red;">&nbsp;</div>
+		<div id="txt2" style="position:absolute;bottom:13%;border:1px solid red;">&nbsp;</div>
+		<div id="txt3" style="position:absolute;bottom:9%;border:1px solid red;">&nbsp;</div>
+		<div id="txt4" style="position:absolute;bottom:5%;border:1px solid red;">&nbsp;</div>
+		<div id="txt5" style="position:absolute;top:30%;right:43%;border:1px solid green;">&nbsp;</div>
+		<div id="txt6" style="position:absolute;top:30%;right:40%;border:1px solid blue;">&nbsp;</div>
+	</body>
+</html>

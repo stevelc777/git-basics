@@ -1,0 +1,61 @@
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>Adventure Game Locations Editor</title>
+
+		<script type="text/javascript">
+		var selDiv = "";
+		function oc(i){
+			selDiv = i;
+			document.getElementById(i).style.border = "1px solid green";
+			document.getElementById("b1").style.visibility = "visible";
+			document.getElementById("b2").style.visibility = "visible";
+			document.getElementById("b3").style.visibility = "visible";
+			document.getElementById("b4").style.visibility = "visible";
+			document.getElementById("b5").style.visibility = "visible";
+		}
+		function dlboc(){
+			document.getElementById(selDiv).style.height = (parseInt(document.getElementById(selDiv).style.height)-10)+"px";
+			document.getElementById(selDiv).style.width = (parseInt(document.getElementById(selDiv).style.width)-10)+"px";
+		}
+		function lboc(){
+			document.getElementById(selDiv).style.height = (parseInt(document.getElementById(selDiv).style.height)-1)+"px";
+			document.getElementById(selDiv).style.width = (parseInt(document.getElementById(selDiv).style.width)-1)+"px";
+		}
+		function rboc(){
+			document.getElementById(selDiv).style.height = (parseInt(document.getElementById(selDiv).style.height)+1)+"px";
+			document.getElementById(selDiv).style.width = (parseInt(document.getElementById(selDiv).style.width)+1)+"px";
+		}
+		function drboc(){
+			document.getElementById(selDiv).style.height = (parseInt(document.getElementById(selDiv).style.height)+10)+"px";
+			document.getElementById(selDiv).style.width = (parseInt(document.getElementById(selDiv).style.width)+10)+"px";
+		}
+		function ta(){
+			document.getElementById("ta1").style.visibility = "visible";
+			document.getElementById("ta1").innerHTML = document.getElementById(selDiv).innerHTML.trim();
+		}
+		function taFinEd(i){
+			document.getElementById(selDiv).innerHTML = document.getElementById("ta1").value;
+			document.getElementById("ta1").style.visibility = "hidden";
+		}
+		</script>
+
+	</head>
+
+  	<body>
+  		<button id="b1" style="visibility:hidden;" onclick="dlboc();"><<</button>
+  		<button id="b2" style="visibility:hidden;" onclick="lboc();">&lt;</button>
+  		<button id="b3" style="visibility:hidden;" onclick="rboc();">></button>
+  		<button id="b4" style="visibility:hidden;" onclick="drboc();">>></button>
+  		<button id="b5" style="visibility:hidden;" onclick="ta();">EDIT</button>
+  	
+  		<div id="div1" style="position:absolute;border:1px solid blue;width:100px;height:100px;top:40%;left:300px;" onclick="oc(this.id);">
+  		You are in a dimly lit room. You can see a chest here. There is a door to the north. kjdhkjdfgkjdf kgjdf gjkhdf kgj dkfjg kdfjg kdfjg kdfjg 
+  		</div>
+  		
+  		<textarea id="ta1" style="position:absolute;border:1px solid blue;width:100px;height:100px;top:40%;left:300px;visibility:hidden;" onchange="taFinEd(this.id);">a textarea</textarea>
+  	</body>
+</html>

@@ -1,0 +1,437 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Suddy</title>
+		<style>
+			td{
+				width:11.111%;
+				font-size:32pt;
+				font-family:arial;
+				text-align:center;
+				border:1px solid black;
+			}
+		</style>
+		<script type="text/javascript">
+			var ind = new Array();
+			
+			//array tileInArea holds the area for a given tile, and areaStartTile is the start tile for a given area
+			var tileInArea = [1,1,1,2,2,2,3,3,3,1,1,1,2,2,2,3,3,3,1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6,4,4,4,5,5,5,6,6,6,4,4,4,5,5,5,6,6,6,7,7,7,8,8,8,9,9,9,7,7,7,8,8,8,9,9,9,7,7,7,8,8,8,9,9,9];
+			var areaStartTile = [1,4,7,28,31,34,55,58,61];
+			
+			var gAStartTile = 0;
+			var gNewAStartTile = 0;
+			var colors = 0;
+			var clicked = 0;
+			var oldID = 0;
+			var settingTiles=0;
+			
+			function init(){
+				for (x=1;x<82;x++){
+					ind[x] = x;
+					//document.getElementById(x+"").innerHTML = x+"";
+				}
+				for (xx=1;xx<10;xx++){
+				var rand9 = get9RandNums();
+					fillArea(xx,rand9);
+				}
+				copyGrid();
+				
+				// put mouse events on all 162 tiles
+				for (at=1;at<82;at++){
+					var att1 = document.createAttribute("onmouseover");
+					var att2 = document.createAttribute("onmouseout");
+					var att3 = document.createAttribute("onclick");
+					att1.value = "fromTile(this.id);";
+					att2.value = "unTile(this.id);";
+					att3.value = "clTile(this.id);";
+					document.getElementById(at+"").setAttributeNode(att1);
+					document.getElementById(at+"").setAttributeNode(att2);
+					document.getElementById(at+"").setAttributeNode(att3);
+					var att1 = document.createAttribute("onmouseover");
+					var att2 = document.createAttribute("onmouseout");
+					var att3 = document.createAttribute("onclick");
+					att1.value = "fromTile(this.id);";
+					att2.value = "unTile(this.id);";
+					att3.value = "clTile(this.id);";
+					document.getElementById("t"+at).setAttributeNode(att1);
+					document.getElementById("t"+at).setAttributeNode(att2);
+					document.getElementById("t"+at).setAttributeNode(att3);
+				}
+			}
+			function copyGrid(){
+				for (aa=1;aa<82;aa++){
+					document.getElementById("t"+aa).innerHTML = document.getElementById(aa+"").innerHTML;
+				}
+			}
+			function both(){
+				hor();
+				ver();
+				colors = 1;
+			}
+			function hor(){
+				showAllH();
+			}
+			function ver(){
+				showAllV();
+			}
+			function showAllH(){
+				for (xx=1;xx<82;xx=xx+9){
+					showRow(xx);
+				}
+				//alert(2);
+			}
+			function showAllV(){
+				for (yy=1;yy<10;yy++){
+					//alert(1);
+					showCol(yy);
+				}
+				//alert(3);
+			}
+			function showNone(){
+				showHNone();
+				showVNone();
+				colors = 0;
+			}
+			function showHNone(){
+				for (xx=1;xx<82;xx++){
+					document.getElementById(xx+"").style.background = "white";
+				}
+			}
+			function showVNone(){
+				for (xx=1;xx<82;xx++){
+					document.getElementById("t"+xx+"").style.background = "white";
+				}
+			}
+			function fillArea(area,rnum){
+				area2 = ((area-1)%3)*3+1+parseInt((area-1)/3)*27; // 1=1,2=4,3=7,4=28,5=31,6=34,7=55,8=58,9=61
+				var sA = area2; //sA is startArea
+				for (x=sA;x<sA+3;x++){
+					document.getElementById(x+"").innerHTML = rnum.substr(x-(sA-1)-1,1).trim();
+				}
+				for (x=sA+9;x<sA+12;x++){
+					document.getElementById(x+"").innerHTML = rnum.substr(x-(sA-1)-9-1+3,1);
+				}
+				for (x=sA+18;x<sA+21;x++){
+					document.getElementById(x+"").innerHTML = rnum.substr(x-(sA-1)-18-1+6,1);
+				}
+			}
+			function rand(i){
+				return Math.floor((Math.random()*i)+1);
+			}
+			function get9RandNums(){
+				var str = "";
+				var seed = "123456789";
+				for (x=9;x>0;x--){
+					n = rand(x);
+					str = str+seed.substr(n-1,1);
+					seed = decr(seed,n);
+				}
+				return str;
+			}
+			function decr(s,k){
+				if (k==1){					// if leftmost
+					return s.substr(1);		// keep from 2nd pos to end
+				}
+				else if(k==s.length){		// if rightmost
+					return s.substr(0,k-1);	// keep from 1st post to 2nd last pos
+					
+				}
+				else{
+					return s.substr(0,k-1)+s.substr(k); // keep from (1st to k-1) + (k to end)
+				}
+			}
+			
+			// colours duplicates in the current column
+			function showCol(c){
+				var colNums = document.getElementById(c+"").innerHTML;
+				colNums = colNums+document.getElementById((c+9)+"").innerHTML;
+				colNums = colNums+document.getElementById((c+18)+"").innerHTML;
+				colNums = colNums+document.getElementById((c+27)+"").innerHTML;
+				colNums = colNums+document.getElementById((c+36)+"").innerHTML;
+				colNums = colNums+document.getElementById((c+45)+"").innerHTML;
+				colNums = colNums+document.getElementById((c+54)+"").innerHTML;
+				colNums = colNums+document.getElementById((c+63)+"").innerHTML;
+				colNums = colNums+document.getElementById((c+72)+"").innerHTML;
+
+				// calls dupes() to get a string of numbers that are dupes in current row
+				var numDupes = dupes(colNums);
+				
+				// calls markDupes() to actually colour the dupes in the current row
+				markDupes(numDupes,c,"c");
+
+				//markDupes(dupes(colNums),c,"c");
+			}
+			
+			// colours duplicates in the current row
+			function showRow(r){
+				var rowNums = document.getElementById(r+"").innerHTML;
+				rowNums = rowNums+document.getElementById((r+1)+"").innerHTML;
+				rowNums = rowNums+document.getElementById((r+2)+"").innerHTML;
+				rowNums = rowNums+document.getElementById((r+3)+"").innerHTML;
+				rowNums = rowNums+document.getElementById((r+4)+"").innerHTML;
+				rowNums = rowNums+document.getElementById((r+5)+"").innerHTML;
+				rowNums = rowNums+document.getElementById((r+6)+"").innerHTML;
+				rowNums = rowNums+document.getElementById((r+7)+"").innerHTML;
+				rowNums = rowNums+document.getElementById((r+8)+"").innerHTML;
+				
+				// calls dupes() to get a string of numbers that are dupes in current row
+				var numDupes = dupes(rowNums);
+				
+				// calls markDupes() to actually colour the dupes in the current row
+				markDupes(numDupes,r,"r");
+				
+				//markDupes(dupes(rowNums),r,"r");
+			}
+			
+			function markDupes(dups,rowcol,rc){
+				//alert(rc);
+				var l = dups.length;
+				var erc = 0;
+				var step = 0;
+				var gr = "";
+				if (rc=="r"){
+					erc = 8;
+					step = 1;
+					gr = "";
+				}
+				else{
+					erc = 72;
+					step = 9;
+					gr = "t";
+				}
+				for (xxx=1;xxx<=l;xxx++){
+					for (yyy=rowcol;yyy<=(rowcol+erc);yyy=yyy+step){
+						if (document.getElementById(gr+yyy+"").innerHTML==dups.substr(xxx-1,1)){
+							if (dups.substr(xxx-1,1)==1){
+								document.getElementById(gr+yyy+"").style.background = "pink";
+							}
+							else if (dups.substr(xxx-1,1)==2){
+								document.getElementById(gr+yyy+"").style.background = "orange";
+							}
+							else if (dups.substr(xxx-1,1)==3){
+								document.getElementById(gr+yyy+"").style.background = "yellow";
+							}
+							else if (dups.substr(xxx-1,1)==4){
+								document.getElementById(gr+yyy+"").style.background = "lightgreen";
+							}
+							else if (dups.substr(xxx-1,1)==5){
+								document.getElementById(gr+yyy+"").style.background = "lightblue";
+							}
+							else if (dups.substr(xxx-1,1)==6){
+								document.getElementById(gr+yyy+"").style.background = "aqua";
+							}
+							else if (dups.substr(xxx-1,1)==7){
+								document.getElementById(gr+yyy+"").style.background = "violet";
+							}
+							else if (dups.substr(xxx-1,1)==8){
+								document.getElementById(gr+yyy+"").style.background = "tan";
+							}
+							else if (dups.substr(xxx-1,1)==9){
+								document.getElementById(gr+yyy+"").style.background = "gold";
+							}
+						}
+					}
+//					alert("md2");
+				}
+//				alert("md3");
+			}
+			
+			function dupes(n){
+			//alert("dupes1");
+				var nd1 = n.replace(/[^1]/g, "").length;
+				var nd2 = n.replace(/[^2]/g, "").length;
+				var nd3 = n.replace(/[^3]/g, "").length;
+				var nd4 = n.replace(/[^4]/g, "").length;
+				var nd5 = n.replace(/[^5]/g, "").length;
+				var nd6 = n.replace(/[^6]/g, "").length;
+				var nd7 = n.replace(/[^7]/g, "").length;
+				var nd8 = n.replace(/[^8]/g, "").length;
+				var nd9 = n.replace(/[^9]/g, "").length;
+				var ret = "There are ";
+				var ret1 = "";
+				if (nd1>1){
+					ret = ret+nd1+" 1's, ";
+					ret1 = ret1+"1";
+				}
+				if (nd2>1){
+					ret = ret+nd2+" 2's, ";
+					ret1 = ret1+"2";
+				}
+				if (nd3>1){
+					ret = ret+nd3+" 3's, ";
+					ret1 = ret1+"3";
+				}
+				if (nd4>1){
+					ret = ret+nd4+" 4's, ";
+					ret1 = ret1+"4";
+				}
+				if (nd5>1){
+					ret = ret+nd5+" 5's, ";
+					ret1 = ret1+"5";
+				}
+				if (nd6>1){
+					ret = ret+nd6+" 6's, ";
+					ret1 = ret1+"6";
+				}
+				if (nd7>1){
+					ret = ret+nd7+" 7's, ";
+					ret1 = ret1+"7";
+				}
+				if (nd8>1){
+					ret = ret+nd8+" 8's, ";
+					ret1 = ret1+"8";
+				}
+				if (nd9>1){
+					ret = ret+nd9+" 9's, ";
+					ret1 = ret1+"9";
+				}
+				//alert(ret);
+				return ret1;
+			}
+			function fromTile(i){
+				var id = areaStartTile[tileInArea[i-1]-1];
+				if (gAStartTile == id){
+					gNewAStartTile = 0; // flag as not new areagrid
+				}
+				else{
+					gNewAStartTile = id; // flag as new areagrid
+					clicked = 0; // removed global 'clicked' flag
+					if (oldID>0){
+						document.getElementById(oldID).style.color="black";
+						document.getElementById(oldID).style.background="white";
+					}
+					oldID = 0;
+				}
+				document.getElementById(i).style.color="teal";
+				gAStartTile = id; // set global current areagrid
+				//if (gAStartTile == id){
+					if (oldID>0){
+						document.getElementById(oldID).style.background="black";
+						document.getElementById(oldID).style.color="white";
+					}
+				//}
+			}
+			function unTile(i){
+				var id0 = (i-1)%9;
+				var id1 = parseInt((id0)/3)*3+1;
+				var id2 = parseInt((i-1)/27);
+				var id = id1+id2*27;
+				document.getElementById(i).style.color="black";
+				showNone();
+				both();				
+			}
+			function clTile(i){
+				if (settingTiles==0){
+					if (clicked>0){
+						doSwap(clicked,i);
+					}
+					else{
+						document.getElementById(i).style.background="black";
+						document.getElementById(i).style.color="white";
+						clicked = i;
+						oldID = i;
+					}
+				}
+				else{
+					setTile(i);
+				}
+			}
+			function doSwap(c,i){
+				var s1 = document.getElementById(clicked).innerHTML;
+				var s2 = document.getElementById(i).innerHTML;
+				document.getElementById(clicked).innerHTML = s2;
+				document.getElementById(i).innerHTML = s1;
+				document.getElementById(clicked).style.color = "black";
+				clicked = 0;
+				oldID = 0;
+				copyGrid();
+				showNone();
+				both();
+			}
+			function setTile(i){
+				document.getElementById(i).style.color="red";
+			}			
+		</script>
+	</head>
+	<body onload="init();">
+	<div id="ids">...</div>
+		<div id="forT1" style="position:absolute;left:50px;">
+			<table cellspacing="0" width="480px" height="480px" style="border:0px solid black;">
+				<tr>
+					<td><table cellspacing="0" style="border:0px solid black;"><tr><td id="1">&nbsp;</td><td id="2">&nbsp;</td><td id="3">&nbsp;</td></tr>
+							<tr><td id="10">&nbsp;</td><td id="11">&nbsp;</td><td id="12">&nbsp;</td></tr>
+							<tr><td id="19">&nbsp;</td><td id="20">&nbsp;</td><td id="21">&nbsp;</td></tr></table></td>
+					<td><table cellspacing="0" style="border:0px solid black;"><tr><td id="4">&nbsp;</td><td id="5">&nbsp;</td><td id="6">&nbsp;</td></tr>
+							<tr><td id="13">&nbsp;</td><td id="14">&nbsp;</td><td id="15">&nbsp;</td></tr>
+							<tr><td id="22">&nbsp;</td><td id="23">&nbsp;</td><td id="24">&nbsp;</td></tr></table></td>
+					<td><table cellspacing="0" style="border:0px solid black;"><tr><td id="7">&nbsp;</td><td id="8">&nbsp;</td><td id="9">&nbsp;</td></tr>
+							<tr><td id="16">&nbsp;</td><td id="17">&nbsp;</td><td id="18">&nbsp;</td></tr>
+							<tr><td id="25">&nbsp;</td><td id="26">&nbsp;</td><td id="27">&nbsp;</td></tr></table></td>
+				</tr>
+				<tr>
+					<td><table cellspacing="0" style="border:0px solid black;"><tr><td id="28">&nbsp;</td><td id="29">&nbsp;</td><td id="30">&nbsp;</td></tr>
+							<tr><td id="37">&nbsp;</td><td id="38">&nbsp;</td><td id="39">&nbsp;</td></tr>
+							<tr><td id="46">&nbsp;</td><td id="47">&nbsp;</td><td id="48">&nbsp;</td></tr></table></td>
+					<td><table cellspacing="0" style="border:0px solid black;"><tr><td id="31">&nbsp;</td><td id="32">&nbsp;</td><td id="33">&nbsp;</td></tr>
+							<tr><td id="40">&nbsp;</td><td id="41">&nbsp;</td><td id="42">&nbsp;</td></tr>
+							<tr><td id="49">&nbsp;</td><td id="50">&nbsp;</td><td id="51">&nbsp;</td></tr></table></td>
+					<td><table cellspacing="0" style="border:0px solid black;"><tr><td id="34">&nbsp;</td><td id="35">&nbsp;</td><td id="36">&nbsp;</td></tr>
+							<tr><td id="43">&nbsp;</td><td id="44">&nbsp;</td><td id="45">&nbsp;</td></tr>
+							<tr><td id="52">&nbsp;</td><td id="53">&nbsp;</td><td id="54">&nbsp;</td></tr></table></td>
+				</tr>
+				<tr>
+					<td><table cellspacing="0" style="border:0px solid black;"><tr><td id="55">&nbsp;</td><td id="56">&nbsp;</td><td id="57">&nbsp;</td></tr>
+							<tr><td id="64">&nbsp;</td><td id="65">&nbsp;</td><td id="66">&nbsp;</td></tr>
+							<tr><td id="73">&nbsp;</td><td id="74">&nbsp;</td><td id="75">&nbsp;</td></tr></table></td>
+					<td><table cellspacing="0" style="border:0px solid black;"><tr><td id="58">&nbsp;</td><td id="59">&nbsp;</td><td id="60">&nbsp;</td></tr>
+							<tr><td id="67">&nbsp;</td><td id="68">&nbsp;</td><td id="69">&nbsp;</td></tr>
+							<tr><td id="76">&nbsp;</td><td id="77">&nbsp;</td><td id="78">&nbsp;</td></tr></table></td>
+					<td><table cellspacing="0" style="border:0px solid black;"><tr><td id="61">&nbsp;</td><td id="62">&nbsp;</td><td id="63">&nbsp;</td></tr>
+							<tr><td id="70">&nbsp;</td><td id="71">&nbsp;</td><td id="72">&nbsp;</td></tr>
+							<tr><td id="79">&nbsp;</td><td id="80">&nbsp;</td><td id="81">&nbsp;</td></tr></table></td>
+				</tr>
+			</table>
+		</div>		
+		<div id="forT2" style="position:absolute;left:800px;">
+			<table cellspacing="0" width="480px" height="480px" style="border:1px solid black;">
+				<tr>
+					<td><table cellspacing="0" style="border:0px solid black;"><tr><td id="t1">&nbsp;</td><td id="t2">&nbsp;</td><td id="t3">&nbsp;</td></tr>
+							<tr><td id="t10">&nbsp;</td><td id="t11">&nbsp;</td><td id="t12">&nbsp;</td></tr>
+							<tr><td id="t19">&nbsp;</td><td id="t20">&nbsp;</td><td id="t21">&nbsp;</td></tr></table></td>
+					<td><table cellspacing="0" style="border:0px solid black;"><tr><td id="t4">&nbsp;</td><td id="t5">&nbsp;</td><td id="t6">&nbsp;</td></tr>
+							<tr><td id="t13">&nbsp;</td><td id="t14">&nbsp;</td><td id="t15">&nbsp;</td></tr>
+							<tr><td id="t22">&nbsp;</td><td id="t23">&nbsp;</td><td id="t24">&nbsp;</td></tr></table></td>
+					<td><table cellspacing="0" style="border:0px solid black;"><tr><td id="t7">&nbsp;</td><td id="t8">&nbsp;</td><td id="t9">&nbsp;</td></tr>
+							<tr><td id="t16">&nbsp;</td><td id="t17">&nbsp;</td><td id="t18">&nbsp;</td></tr>
+							<tr><td id="t25">&nbsp;</td><td id="t26">&nbsp;</td><td id="t27">&nbsp;</td></tr></table></td>
+				</tr>
+				<tr>
+					<td><table cellspacing="0" style="border:0px solid black;"><tr><td id="t28">&nbsp;</td><td id="t29">&nbsp;</td><td id="t30">&nbsp;</td></tr>
+							<tr><td id="t37">&nbsp;</td><td id="t38">&nbsp;</td><td id="t39">&nbsp;</td></tr>
+							<tr><td id="t46">&nbsp;</td><td id="t47">&nbsp;</td><td id="t48">&nbsp;</td></tr></table></td>
+					<td><table cellspacing="0" style="border:0px solid black;"><tr><td id="t31">&nbsp;</td><td id="t32">&nbsp;</td><td id="t33">&nbsp;</td></tr>
+							<tr><td id="t40">&nbsp;</td><td id="t41">&nbsp;</td><td id="t42">&nbsp;</td></tr>
+							<tr><td id="t49">&nbsp;</td><td id="t50">&nbsp;</td><td id="t51">&nbsp;</td></tr></table></td>
+					<td><table cellspacing="0" style="border:0px solid black;"><tr><td id="t34">&nbsp;</td><td id="t35">&nbsp;</td><td id="t36">&nbsp;</td></tr>
+							<tr><td id="t43">&nbsp;</td><td id="t44">&nbsp;</td><td id="t45">&nbsp;</td></tr>
+							<tr><td id="t52">&nbsp;</td><td id="t53">&nbsp;</td><td id="t54">&nbsp;</td></tr></table></td>
+				</tr>
+				<tr>
+					<td><table cellspacing="0" style="border:0px solid black;"><tr><td id="t55">&nbsp;</td><td id="t56">&nbsp;</td><td id="t57">&nbsp;</td></tr>
+							<tr><td id="t64">&nbsp;</td><td id="t65">&nbsp;</td><td id="t66">&nbsp;</td></tr>
+							<tr><td id="t73">&nbsp;</td><td id="t74">&nbsp;</td><td id="t75">&nbsp;</td></tr></table></td>
+					<td><table cellspacing="0" style="border:0px solid black;"><tr><td id="t58">&nbsp;</td><td id="t59">&nbsp;</td><td id="t60">&nbsp;</td></tr>
+							<tr><td id="t67">&nbsp;</td><td id="t68">&nbsp;</td><td id="t69">&nbsp;</td></tr>
+							<tr><td id="t76">&nbsp;</td><td id="t77">&nbsp;</td><td id="t78">&nbsp;</td></tr></table></td>
+					<td><table cellspacing="0" style="border:0px solid black;"><tr><td id="t61">&nbsp;</td><td id="t62">&nbsp;</td><td id="t63">&nbsp;</td></tr>
+							<tr><td id="t70">&nbsp;</td><td id="t71">&nbsp;</td><td id="t72">&nbsp;</td></tr>
+							<tr><td id="t79">&nbsp;</td><td id="t80">&nbsp;</td><td id="t81">&nbsp;</td></tr></table></td>
+				</tr>
+			</table>
+		</div>
+		<div id="txt" style="position:absolute;top:10px;left:650px;">...</div>
+		<div id="BothOn" onclick="both();" style="position:absolute;left:620px;top:50px;font-size:24pt;font-family:arial;border:2px solid brown;width:85px;text-align:center;">Color ON</div>
+		<div id="BothOff" onclick="showNone();" style="position:absolute;left:620px;top:150px;font-size:24pt;font-family:arial;border:2px solid brown;width:85px;text-align:center;">Color OFF</div>
+		<div id="setting" onclick="settingTiles=1;" style="position:absolute;left:620px;top:300px;font-size:24pt;font-family:arial;border:2px solid brown;width:85px;text-align:center;">Set Tiles</div>
+	</body>
+</html>
